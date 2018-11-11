@@ -15,11 +15,11 @@ class DynamicPDFController extends Controller
      return view('dynamic_pdf')->with('docu_data', $docu_data);
     }
 
-    function get_docu_data()
+    function get_docu_data($docu_id)
     {
         
      $docu_data = DB::table('docus')
-        
+        ->where('docu_id', '=', $docu_id)
         ->get();
      return $docu_data;
     }
@@ -27,139 +27,70 @@ class DynamicPDFController extends Controller
  
     function pdf($docu_id) {
         
-        dd($docu_id);
-    // $pdf = \App::make('dompdf.wrapper');
-    //  $pdf->loadHTML($this->convert_docu_data_to_html());
-   // $pdf->loadHTML($this->get_data_pdf());
+        
+     $pdf = \App::make('dompdf.wrapper');
+     $pdf->loadHTML($this->convert_docu_data_to_html($docu_id));
+     //$pdf->loadHTML($this->get_data_pdf());
     
      return $pdf->stream();
     }
 
-    function convert_docu_data_to_html()
+    function convert_docu_data_to_html($docu_id)
     {
-     $docu_data = $this->get_docu_data(4);
+     $docu_data = $this->get_docu_data($docu_id);
 
      foreach($docu_data as $docu)
      {
      $output = '
-     <h2 align="center">Document and Routing Information</h2>
+     <div style="position:absolute;">
+	<h3>PASIG RIVER REHABILITATION COMMISION</h3>
+	<p>DOCUMENT ROUTING SLIP</p>
+</div>
+<div style=" position:relative; float: right;  border: 1px solid black; padding: 10px 25px; margin-top: 2%; ">
+	<label>
+	  <input type="checkbox" checked="checked">
+	  <span class="checkmark"></span>
+	  RUSH
+	</label>
+</div>
+<br><br><br><br><br>
+<table style="border-collapse: collapse;  border: 1px solid black; width:100%; text-align:center;">
+  <tr>
+    <td colspan="2" style="border: 1px solid black; text-align:left;"><b>From:</b> <br>	&nbsp;	&nbsp;'.$docu->sender.'</td>
+    <td colspan="2" style="border: 1px solid black; text-align:left;"><b>Date Received:</b>
+	<br> 	&nbsp;	&nbsp;</td>
+    <td colspan="2" style="border: 1px solid black; text-align:left;"><b>Reference Number:</b> <br>
+	&nbsp;	&nbsp;'.$docu->docu_id.'</td>
+  </tr>
+  
+   <tr>
+    <td colspan="6" style="border: 1px solid black; text-align:left;"><b>SUBJECT:</b>
+	<br>	&nbsp;	&nbsp; '.$docu->subject.'</td>
+   </tr>
    
-     <h3>Document Information</h3>
-     <table style="font-family: Barlow; text-align: left; border: 1px solid black; width:100%;  border-collapse: collapse;">
-      			
-		<tr>
-            <th style="border: 1px solid black; padding: 8px;">Document Code</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->docu_id.'</td>
-        </tr>
-    
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">For/To</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->recipient.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Actual Date Received</th>
-            <td style="border: 1px solid black; padding: 8px;">to be coded soon...</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Sender</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->sender.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Sender Address</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->sender_add.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Subject</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->subject.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Addressee(s)</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->addressee.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">CC Addressee(s)</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->cc_addressee.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Final Action Status</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->final_action_stat.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Final Action</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->final_action_remarks.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Final Action Date</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->final_action_date.'</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Final Action By</th>
-            <td style="border: 1px solid black; padding: 8px;">to be coded soon....</td>
-        </tr>
-        
-     </table>
-    
-     
-     
-     <h3>Routing Information</h3>
-     <table style="font-family: Barlow; text-align: left; border: 1px solid black; width:100%;  border-collapse: collapse;">
-         <tr>
-            <th style="border: 1px solid black; padding: 8px;">Date/Time Stamp</th>
-            <td style="border: 1px solid black; padding: 8px;">'.$docu->created_at.'</td>
-        </tr>
-    
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Routing Status</th>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Receiving Office</th>
-            <td style="border: 1px solid black; padding: 8px;">to be coded soon...</td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Date/Time Received</th>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Date/Time Released</th>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-        </tr>
-        
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Accept Remarks</th>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-        </tr>
-      </table>
-
-      <table style="font-family: Barlow; text-align: left; margin-top:5%; border: 1px solid black; width:100%;  border-collapse: collapse;">  
-        
-         <tr>
-            <th style="border: 1px solid black; padding: 8px;"></th>Date/Time</th>
-            <th style="border: 1px solid black; padding: 8px;">Department</th>
-            <th style="border: 1px solid black; padding: 8px;">Remarks</th>		
-        </tr>
-        
-        <tr>
-            <td style="border: 1px solid black; padding: 8px;">Routing Status</td>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-            <td style="border: 1px solid black; padding: 8px;"></td>
-        </tr>
-     
-    </table>
-    
+   <tr>
+    <th colspan="6"  style="border: 1px solid black;">ROUTING SLIP</th>
+   </tr>
+      
+   <tr>
+    <th style="border: 1px solid black;">FROM</th>
+	<th style="border: 1px solid black;">TO</th>
+	<th style="border: 1px solid black;">DATE</th>
+	<th style="border: 1px solid black;">INSTRUCTIONS/REMARKS</th>
+	<th style="border: 1px solid black;">DEADLINE</th>
+	<th style="border: 1px solid black;">DATE COMPLIED</th>
+   </tr>
+   
+   <tr>
+    <td style="border: 1px solid black;">'.$docu->sender.'</td>
+	<td style="border: 1px solid black;">'.$docu->recipient.'</td>
+	<td style="border: 1px solid black;">date right now</td>
+	<td style="border: 1px solid black;"> Wala pang remarks, nasa kabilang table</td>
+	<td style="border: 1px solid black;">'.$docu->final_action_date.'</td>
+	<td style="border: 1px solid black;">date complied</td>
+	
+   </tr>
+   </table>
     ';}
      return $output;
     }

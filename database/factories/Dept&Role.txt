@@ -1,0 +1,60 @@
+$dept1 = new App\Department();
+$dept2 = new App\Department();
+$dept3 = new App\Department();
+$dept4 = new App\Department();
+$dept5 = new App\Department();
+$dept6 = new App\Department();
+$dept7 = new App\Department();
+$dept8 = new App\Department();
+$dept9 = new App\Department();
+$dept10 = new App\Department();
+$dept11 = new App\Department();
+$dept12 = new App\Department();
+$dept13 = new App\Department();
+$dept14 = new App\Department();
+
+$dept1->name = 'Administrative Division';
+$dept2->name = 'Deputy Executive Director For Finance and Administrative Services';
+$dept3->name = 'Board of Commissioners';
+$dept4->name = 'Design Division';
+$dept5->name = 'Easement Recovery; Housing and Resettlement Division';
+$dept6->name = 'Environment Management Division';
+$dept7->name = 'Executive Secretary';
+$dept8->name = 'Finance Division';
+$dept9->name = 'Management Information Systems Division';
+$dept10->name = 'Deputy Executive Director for Operations';
+$dept11->name = 'Planning Division';
+$dept12->name = 'Project Manager Office';
+$dept13->name = 'Public Information; Advocacy and Tourism Division';
+$dept14->name = 'Riverbanks Development and Flood Control Division';
+
+$dept1->save();
+$dept2->save();
+$dept3->save();
+$dept4->save();
+$dept5->save();
+$dept6->save();
+$dept7->save();
+$dept8->save();
+$dept9->save();
+$dept10->save();
+$dept11->save();
+$dept12->save();
+$dept13->save();
+$dept14->save();
+
+$role1 = new App\Role();
+$role2 = new App\Role();
+$role3 = new App\Role();
+$role4 = new App\Role();
+
+$role1->name = 'Super Admin';
+$role2->name = 'Encoder';
+$role3->name = 'Viewer';
+$role4->name = 'Approver';
+
+$role1->save();
+$role2->save();
+$role3->save();
+$role4->save();
+quit

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Docu;
-use Auth;
+
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,8 +24,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $docus = Docu::orderBy('created_at' , 'desc')->where('username', '=', Auth::user()->username)->paginate(10);
-        return view('docus.index')->with('docus', $docus);
+        $docus = Docu::orderBy('created_at' , 'desc')->get();
+        return view('home')->with('docus', $docus);
        
     }
 

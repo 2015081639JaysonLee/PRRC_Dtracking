@@ -4,21 +4,61 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Docu;
+use App\User;
+use App\Forsending;
+use App\routeInfo;
 use Auth;
 
 
 
 class DocuController extends Controller
-{
+{   
+    /* route info */
+    public function routeInfo(Request $request)
+    {
+        $this->validate($request, [
+            'status' => 'required',
+            'status' => 'required',
+        ]);
+        $info = new routeInfo();
+        $info->createInfo($request);
+        
+        return redirect('/docu/' . $request->input('hidden_docuId'))->with('success', 'Route info added!');
+    }
+    
+    /* edit route info */
+    public function editRouteInfo(Request $request)
+    {
+        $this->validate($request, [
+            'status' => 'required',
+            'status' => 'required',
+        ]);
+        $info = new routeInfo();
+        $info->editInfo($request);
+
+        return redirect('/docu/' . $request->input('hidden_docuId'))->with('success', 'Route info updated!');
+    }
+
+    /* forsending */
+    public function sendTo(Request $request)
+    {
+        $this->validate($request, [
+            'receiver' => 'required',
+            'deadline' => 'required',
+        ]);
+        
+        $sendTo = new Forsending();
+        $sendTo->updateForSendRecord($request);
+
+        return redirect('/docu')->with('success', 'Record sent to ' . User::where('id', $request->input('receiver'))->pluck('username')->first());
+    }
 
     /**audit */
-    public function audit(Docu $docu)
+    public function audit($docu_id)
         {
-            $diff = $docu->audits()->with('username')->get()->last();
-
-            return view('docus.audit')
-                ->withPost($docu)
-                ->withDiff($diff);
+            $docuModel = new Docu();
+            $output = $docuModel->showAudit($docu_id);
+            return view('docus.audit')->with('history', $output);
         }
             
     /**
@@ -31,20 +71,14 @@ class DocuController extends Controller
         $this->middleware('auth');
     }
     
-    
-    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        /* to order the display */
-        //$docu = Docu::orderBy('created_date' , 'desc')->get();
-       // $docus = Docu::all();
-        
-        $docus = Docu::orderBy('created_at' , 'desc')->where('username', '=', Auth::user()->username)->paginate(10);
+    {   
+        $docus = Docu::orderBy('created_at' , 'desc')->where('user_id', '=', Auth::user()->id)->get();
         return view('docus.index')->with('docus', $docus);
     }
 
@@ -55,7 +89,6 @@ class DocuController extends Controller
      */
     public function create()
     {
-        
         return view('docus.create');
     }
 
@@ -68,30 +101,19 @@ class DocuController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
+            'department' => 'required',
             'subject' => 'required',
             'recipient' => 'required',
             'sender_add' => 'required',
-            'final_action_stat' => 'required',
-            'final_action_remarks' => 'required',
             'final_action_date' => 'required',
-            'final_action_by' => 'required'
         ]);
 
         //Create Docu
             $docu = new Docu;
-            $docu->subject = $request->input('subject');
-            $docu->username = $request->input('username');
-            $docu->recipient = $request->input('recipient');
-            $docu->sender = $request->input('sender');
-            $docu->sender_add = $request->input('sender_add');
-            $docu->addressee = $request->input('addressee');
-            $docu->cc_addressee = $request->input('cc_addressee');
-            $docu->final_action_stat = $request->input('final_action_stat');
-            $docu->final_action_remarks = $request->input('final_action_remarks');
-            $docu->final_action_date = $request->input('final_action_date');
-            $docu->final_action_by = $request->input('final_action_by');
-            $docu->save();
-
+            $docu_data= $docu->createDocu($request);
+            
+            $forsending = new Forsending;
+            $forsending->newRecordonCreateDocu($docu_data);
             return redirect('/docu')->with('success', 'Document Created');
     }
 
@@ -103,9 +125,12 @@ class DocuController extends Controller
      */
     public function show($docu_id)
     {
-        
+        // $this->tryCompact();
         $docu = Docu::where('docu_id', '=', $docu_id)->first();
-        return view('docus.show')->with('docu', $docu);
+        $userForSendList = User::whereNotIn('id', [Auth::user()->id])->get();   
+        $info = routeInfo::orderBy('created_at' , 'desc')->where('docu_id', '=', $docu_id)->paginate(4);
+        $editInfoValues = routeInfo::where('docu_id', '=', $docu_id)->latest('id')->first();
+        return view('docus.show', compact('docu', 'userForSendList', 'docu_id', 'info', 'editInfoValues'));
     }
 
     /**
@@ -130,31 +155,17 @@ class DocuController extends Controller
     public function update(Request $request, $docu_id)
     {
         $this->validate($request,[
-            'subject' => 'required',
-            'recipient' => 'required',
-            'sender_add' => 'required',
-            'final_action_stat' => 'required',
+            'final_action_status' => 'required',
             'final_action_remarks' => 'required',
-            'final_action_date' => 'required',
-            'final_action_by' => 'required'
         ]);
 
         //Create Docu
-            $docu = Docu::where('docu_id' , '=', $docu_id)->first()->where('username', '=', Auth::user()->username);
-            $docu->subject = $request->input('subject');
-            $docu->recipient = $request->input('recipient');
-            $docu->sender = $request->input('sender');
-            $docu->sender_add = $request->input('sender_add');
-            $docu->addressee = $request->input('addressee');
-            $docu->cc_addressee = $request->input('cc_addressee');
-            $docu->final_action_stat = $request->input('final_action_stat');
+            $docu = Docu::where('docu_id' , '=', $docu_id)->first();
+            $docu->final_action_stat = $request->input('final_action_status');
             $docu->final_action_remarks = $request->input('final_action_remarks');
-            $docu->final_action_date = $request->input('final_action_date');
-            $docu->final_action_by = $request->input('final_action_by');
             $docu->save();
 
-            return redirect('/docu')->with('success', 'Document Updated');
-   
+            return redirect('/docu')->with('success', 'Document Updated');  
     }
 
     /**
@@ -165,24 +176,9 @@ class DocuController extends Controller
      */
     public function destroy($docu_id)
     {
-        $docu = Docu::where('docu_id', '=', $docu_id)->first();
-
-             
+        $docu = Docu::where('docu_id', '=', $docu_id)->first();    
         $docu->delete();
         return redirect('/docu')->with('success', 'Document Removed');
     }
 
-    public function searchcontent(){
-
-
-        $searchkey = \Request::get('title');
-        $docus =  Docu::where('subject', 'like', '%' .$searchkey. '%')
-                        ->orWhere('id', 'like', '%'.$searchkey.'%')
-                        ->orWhere('recipient', 'like', '%'.$searchkey.'%')
-                        ->orWhere('sender', 'like', '%'.$searchkey.'%')
-                        ->orWhere('final_action_stat', 'like', '%'.$searchkey.'%')
-                        ->orderBy('id')->paginate(10);
-
-        return view('searchcontent', ['docus' => $docus]);
-    }
 }

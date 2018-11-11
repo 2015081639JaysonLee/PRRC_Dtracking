@@ -15,17 +15,14 @@ class CreateDocusTable extends Migration
     {
         Schema::create('docus', function (Blueprint $table) {
             $table->increments('docu_id');
-            $table->string('username');
+            $table->integer('user_id');
+            $table->string('department_id');
             $table->string('recipient');
             $table->string('sender');
             $table->string('sender_add');
             $table->string('subject');
             $table->string('addressee');
-            $table->string('cc_addressee');
-            $table->string('final_action_stat');
-            $table->string('final_action_remarks');
             $table->date('final_action_date');
-            $table->string('final_action_by');
             $table->timestamps();
         });
     }
