@@ -12,8 +12,14 @@
 
     <li><a href="/home"><i class="material-icons">folder_open</i>&nbsp; All Documents</a></li>
     <li><a href="/docu"><i class="material-icons">folder</i>&nbsp; My Documents</a></li>
-    <li><a href="/intransit"><i class="material-icons">arrow_forward</i> &nbsp; In Transit</a></li>
-    <li><a href="/home"><i class="material-icons">people</i>&nbsp; Manage Users</a></li>
+    <!-- <li><a href="/intransit"><i class="material-icons">check</i> &nbsp; Receiving</a></li> -->
+    <li><a href="/accepted"><i class="material-icons">check</i>&nbsp; Accepted Documents</a></li>
+    <li><a href="/inactive"><i class="material-icons">error_outline</i>&nbsp; Inactive Documents</a></li>
+    <li><a href="/receive"><i class="material-icons">note</i>&nbsp; Recieved Documents</a></li>
+    <li><a href="/soft"><i class="material-icons">delete</i>&nbsp; Soft Deleted Documents</a></li>
+    @if(Auth::user()->role->name == 'Super Admin')
+    <li><a href="/users"><i class="material-icons">people</i>&nbsp; Manage Users</a></li>
+    @endif
     <li><div class="divider"></div></li>
     <li><form action="{{route('logout')}}" method="POST">
         @csrf    

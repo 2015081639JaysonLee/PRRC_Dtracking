@@ -15,10 +15,12 @@ class CreateForsendingsTable extends Migration
     {
         Schema::create('forsendings', function (Blueprint $table) {
             $table->increments('send_id');
-            $table->integer('docu_id');
-            $table->integer('sender_id');
-            $table->string('receiver_id');
-            $table->date('date_deadline')->default('1111-11-11');
+            $table->integer('docu_id')->unsigned();
+            $table->string('sender');
+            $table->integer('receipient_id')->unsigned();
+            $table->date('date_deadline');
+            // $table->integer('receivedBy_id');
+            $table->integer('routeinfo_id')->unsigned();
             $table->timestamps();
         });
     }

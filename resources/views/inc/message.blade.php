@@ -1,19 +1,22 @@
 @if(count($errors) > 0)
-    @foreach($errors->all() as $error)
-        <div class="alert alert-danger">
-            {{$error}}
-        </div>
-    @endforeach
+    <div class="message red white-text" style = "padding : 20px;">
+        @foreach($errors->all() as $error)
+            <p> {{$error}} </p>
+        @endforeach
+    </div>
+    <i class="material-icons right-align alert_close">close</i>
 @endif
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{session('success')}}
+@if(session()->has('error'))
+    <div class="message red white-text" style = "padding : 20px;">
+        {{session()->get('error')}}
+        <i class="material-icons right-align alert_close">close</i>
     </div>
 @endif
 
-@if(session('error'))
-    <div class="alert alert-danger">
-        {{session('error')}}
+@if(session()->has('success'))
+    <div class="message green white-text" style = "padding : 20px;">
+        {{session()->get('success')}}
+        <i class="material-icons right-align alert_close">close</i>
     </div>
 @endif

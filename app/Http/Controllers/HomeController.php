@@ -24,9 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $title = "All Documents";
         $docus = Docu::orderBy('created_at' , 'desc')->get();
-        return view('home')->with('docus', $docus);
-       
+        return view('docus.index', compact('docus', 'title'));
     }
 
     

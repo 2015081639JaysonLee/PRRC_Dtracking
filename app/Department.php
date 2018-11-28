@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    //
+    //Table Name
+    protected $table = 'departments';
+    //Primary Key
+    public $primaryKey = 'id';
 
     public function user()
     {

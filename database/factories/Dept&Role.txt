@@ -57,4 +57,61 @@ $role1->save();
 $role2->save();
 $role3->save();
 $role4->save();
+
+$user1 = new App\User();
+$user2 = new App\User();
+$user3 = new App\User();
+$user4 = new App\User();
+
+$user1->username = "JaysonLee"
+$user1->firstname = "Jayson"
+$user1->lastname = "Lee"
+$user1->department_id = 1
+$user1->role_id = 1
+$user1->password = '$2y$10$5ELydRkX3IX9GjWSjkRvoOprgXsHu.GR5.2B4VPJyJKOQY.g/v1mm'
+$user1->remember_token = "creamfilla"
+
+$user2->username = "JenineLucero"
+$user2->firstname = "Jenine"
+$user2->lastname = "Lucero"
+$user2->department_id = 2
+$user2->role_id = 2
+$user2->password = '$2y$10$5ELydRkX3IX9GjWSjkRvoOprgXsHu.GR5.2B4VPJyJKOQY.g/v1mm'
+$user2->remember_token = "sandwiches"
+
+$user3->username = "FerolNohay"
+$user3->firstname = "Ferol"
+$user3->lastname = "Nohay"
+$user3->department_id = 3
+$user3->role_id = 3
+$user3->password = '$2y$10$5ELydRkX3IX9GjWSjkRvoOprgXsHu.GR5.2B4VPJyJKOQY.g/v1mm'
+$user3->remember_token = "partytimes"
+
+$user4->username = "LorenzIgnacio"
+$user4->firstname = "Lorenz"
+$user4->lastname = "Ignacio"
+$user4->department_id = 4
+$user4->role_id = 4
+$user4->password = '$2y$10$5ELydRkX3IX9GjWSjkRvoOprgXsHu.GR5.2B4VPJyJKOQY.g/v1mm'
+$user4->remember_token = "assortment"
+
+$user1->save()
+$user2->save()
+$user3->save()
+$user4->save()
+
+$status1 = new App\Statuscode();
+$status2 = new App\Statuscode();
+$status3 = new App\Statuscode();
+$status4 = new App\Statuscode();
+
+$status1->status = "Approved"
+$status2->status = "Disapproved"
+$status3->status = "Under Review"
+$status4->status = "Cancelled"
+
+$status1->save()
+$status2->save()
+$status3->save()
+$status4->save()
 quit

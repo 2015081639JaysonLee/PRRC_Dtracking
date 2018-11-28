@@ -16,24 +16,29 @@ class Forsending extends Model implements Auditable
 
     public function docu()
     {
-        return $this->hasOne('App\Docu');
+        return $this->belongsTo('App\Docu');
     }
 
-    public function newRecordonCreateDocu($docu_data)
-    {
-        $this->docu_id = $docu_data['docu'];
-        $this->sender_id = $docu_data['user'];
-        $this->receiver_id = (string)$docu_data['user'];
+    public function newRecordonCreateDocu($request, $route_data)
+    {   
+        $date_with_seconds = $request->input('final_action_date') .' 17:0:0';
+        $receiver_id = User::where('username', $request->input('recipient'))->pluck('id')->first();
+        $this->docu_id = $route_data['docu'];
+        $this->sender = $request->input('sender');
+        $this->receipient_id = $receiver_id;
+        $this->date_deadline = $date_with_seconds;
+        $this->routeinfo_id = $route_data['routeinfo'];
         $this->save();
     }
 
     public function updateForSendRecord($request)
-    {
-        $this->where('docu_id',  $request->input('hidden_docuId'))
-        ->update([
-            'sender_id' => $request->input('hidden_senderId'),
-            'receiver_id' => $request->input('receiver'),
-            'date_deadline' => $request->input('deadline')
-        ]);
+    {        
+        $date_with_seconds = $request->input('deadline') .' 17:0:0';
+        $record_to_update = $this->whereDocu_id($request->input('hidden_docuId'))->first();
+        $record_to_update->sender = $request->input('hidden_sender');
+        $record_to_update->receipient_id = User::where('username', $request->input('receiver'))->pluck('id')->first();
+        $record_to_update->date_deadline = $date_with_seconds;
+        $record_to_update->routeinfo_id = $request->input('hidden_routeinfoID');
+        $record_to_update->save();
     }
 }

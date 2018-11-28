@@ -37,4 +37,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Role');
     }
+
+    public function docu()
+    {
+        return $this->hasOne('App\Docu');
+    }
+
 }

@@ -14,16 +14,20 @@ class CreateDocusTable extends Migration
     public function up()
     {
         Schema::create('docus', function (Blueprint $table) {
-            $table->increments('docu_id');
-            $table->integer('user_id');
-            $table->string('department_id');
-            $table->string('recipient');
-            $table->string('sender');
-            $table->string('sender_add');
+            $table->increments('id');
+            $table->integer('department_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->string('subject');
-            $table->string('addressee');
-            $table->date('final_action_date');
+            $table->string('recipient');
+            $table->string('addressee')->nullable();
+            $table->string('sender');
+            $table->string('sender_add')->nullable();
+            $table->nullableTimestamps('final_action_date');
+            $table->integer('is_rush')->default(0);
+            $table->string('iso_code')->nullable();
+            $table->string('location', 9);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

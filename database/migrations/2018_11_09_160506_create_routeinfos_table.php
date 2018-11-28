@@ -15,10 +15,10 @@ class CreateRouteinfosTable extends Migration
     {
         Schema::create('route_infos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('edited_by');
-            $table->integer('docu_id');
-            $table->string('scanned_docu')->default('Sample pic');
-            $table->string('status');
+            $table->integer('edited_by')->unsigned();
+            $table->integer('docu_id')->unsigned();
+            $table->text('upload_data')->nullable();
+            $table->integer('statuscode_id')->unsigned();
             $table->string('remarks');
             $table->timestamps();
         });
